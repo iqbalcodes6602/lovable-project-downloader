@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Lovable Project Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .log {
+            background: #f5f5f5;
+            padding: 10px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Lovable Project Downloader</h1>
+    <input type="text" id="projectId" placeholder="Enter Project ID" required />
+    <input type="text" id="sessionToken" placeholder="Enter Session Token" required />
+    Lovable > Project > Dev Tools > Applications > Cookies > lovable.dev > lovable-session-id.id
+    <button id="downloadBtn">Download Project</button>
+
+    <div class="log" id="log"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        const logEl = document.getElementById('log');
+
+        function log(message) {
+            console.log(message);
+            logEl.textContent += message + '\n';
+        }
+
+        document.getElementById('downloadBtn').addEventListener('click', async () => {
+            const projectId = document.getElementById('projectId').value.trim();
+            const sessionToken = document.getElementById('sessionToken').value.trim();
+
+            if (!projectId || !sessionToken) {
+                alert('Please enter both Project ID and Session Token');
+                return;
+            }
+
+            try {
+                log(`Fetching project data for ID: ${projectId}...`);
+
+                const res = await fetch(`/project/${projectId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${sessionToken}`
+                    }
+                });
+
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(`API Error: ${res.status} - ${errorText}`);
+                }
+
+                const data = await res.json();
+
+                if (!data.files || !Array.isArray(data.files)) {
+                    throw new Error('Invalid project data received.');
+                }
+
+                log(`Fetched ${data.files.length} files. Creating ZIP...`);
+
+                const zip = new JSZip();
+                let fileCount = 0;
+
+                data.files.forEach(file => {
+                    if (!file.binary && file.name && file.contents !== undefined) {
+                        zip.file(file.name, file.contents);
+                        fileCount++;
+                    }
+                });
+
+                const blob = await zip.generateAsync({ type: 'blob' });
+                const zipFilename = `lovable-project-${projectId.slice(0, 8)}.zip`;
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = zipFilename;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+
+                log(`Downloaded ${fileCount} files as ${zipFilename}.`);
+            } catch (error) {
+                console.error(error);
+                log(`Error: ${error.message}`);
+                alert('Failed to download project. See log for details.');
+            }
+        });
+    </script>
+</body>
+
+</html>
