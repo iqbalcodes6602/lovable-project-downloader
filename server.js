@@ -2,9 +2,11 @@ const express = require('express');
 const fetch = require('node-fetch');
 const cors = require('cors');
 const path = require('path');
+const dotenv = require('dotenv');
 
 const app = express();
-const PORT = 4000;
+dotenv.config();
+const PORT = process.env.PORT || 4000;
 
 // Setup view engine
 app.set('view engine', 'ejs');
