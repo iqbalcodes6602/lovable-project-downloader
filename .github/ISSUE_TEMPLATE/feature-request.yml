@@ -46,8 +46,8 @@ body:
       label: Component
       description: Which component would this affect?
       options:
-        - Satellite
-        - Ground Control
+        - Frontend
+        - Backend
         - Both
         - Documentation
         - Other

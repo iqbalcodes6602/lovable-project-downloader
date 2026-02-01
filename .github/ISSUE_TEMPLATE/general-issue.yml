@@ -22,8 +22,8 @@ body:
       label: Component
       description: Which component is affected?
       options:
-        - Satellite
-        - Ground Control
+        - Frontend
+        - Backend
         - Both
         - Documentation
         - Other
