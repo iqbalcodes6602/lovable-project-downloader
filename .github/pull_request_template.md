@@ -8,7 +8,7 @@ Issue: #(issue)
 
 Please include a summary of the change. What feature you implemented. Also include relevant motivation and context.
 
-## Screenshots/Gif/Short Video (if applicable)
+## Screenshots/Gif/Short Video (in case of UI changes)
 
 Add screenshots to help explain your changes if applicable.
 
@@ -20,12 +20,6 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 - [ ] Integration tests
 - [ ] Manual testing
 - [ ] Other (describe below)
-
-**Test Configuration**:
-
-- OS:
-- Go version:
-- Other dependencies:
 
 ## Checklist
 
